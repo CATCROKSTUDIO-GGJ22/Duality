@@ -25,6 +25,10 @@ public class PlayerStats : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (baseLeftMana != baseRightMana)
+        {
+            Debug.Log("WARNING: Left and Right Wings have different initial values! This might lead to unpredictable results with asynchrony");
+        }
         currentLeftMana = baseLeftMana;
         currentRightMana = baseRightMana;
     }
@@ -35,20 +39,11 @@ public class PlayerStats : MonoBehaviour
         
     }
 
-    // Calculates the asynchrony factor between the two Wings
-    // the more mana difference, the more angular asynchrony between Wings
-    // asynchrony is always balanced (which means a 70% asynchrony translates into +35% -35% with independence between the specific stats - only cares about difference)
-    // the theoretical maximun is 100% asynchrony (+50% -50%) corresponding the higher to the faster Angular, where 100% is the base Angular
-    // the id indicates the Wing being hit, which starts the new rotation cycle
-    private float CalculateNewAsynchrony(int id)
-    {
-        return 0;
-    }
-
     // Updates the PlayerStats and sends the changes to the PlayerController
     // the id indicates the Wing being hit, which mana is being substracted
     public void Hit(int id, Vector2 hittingPoint)
     {
+        // Substract damage
         switch (id)
         {
             case 0:
@@ -60,10 +55,21 @@ public class PlayerStats : MonoBehaviour
                 //check for game over condition (WIP)
                 break;
         }
+
+        // Push the Helioid and swap its rotation
         playerController.ResetRotation(hittingPoint);
 
         // Trigger invincibility time
         //(WIP)
+    }
+
+    // Calculates the asynchrony factor between the two Wings
+    // the more mana difference, the more angular asynchrony between Wings
+    // asynchrony is always balanced (which means a 70% asynchrony translates into +35% -35% with independence between the specific stats - only cares about difference)
+    // the theoretical maximun is 100% asynchrony (+50% -50%) corresponding the higher to the faster Angular, where 100% is the base Angular
+    public float CalculateNewAsynchrony()
+    {
+        return Mathf.Abs((currentLeftMana - currentRightMana) / (float)(baseLeftMana + baseRightMana));
     }
 
     // Returns the mana value of the Wing with the given ID (or -1 if error happens)
