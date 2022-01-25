@@ -35,27 +35,42 @@ public class PlayerStats : MonoBehaviour
         
     }
 
-    // Updates the PlayerStats and sends the changes to the PlayerController
-    public void Hit(int wingID, Vector2 hittingPoint)
+    // Calculates the asynchrony factor between the two Wings
+    // the more mana difference, the more angular asynchrony between Wings
+    // asynchrony is always balanced (which means a 70% asynchrony translates into +35% -35% with independence between the specific stats - only cares about difference)
+    // the theoretical maximun is 100% asynchrony (+50% -50%) corresponding the higher to the faster Angular, where 100% is the base Angular
+    // the id indicates the Wing being hit, which starts the new rotation cycle
+    private float CalculateNewAsynchrony(int id)
     {
-        switch (wingID)
+        return 0;
+    }
+
+    // Updates the PlayerStats and sends the changes to the PlayerController
+    // the id indicates the Wing being hit, which mana is being substracted
+    public void Hit(int id, Vector2 hittingPoint)
+    {
+        switch (id)
         {
             case 0:
                 currentLeftMana -= baseDamageTaken;
-                //WIP
+                //check for game over condition (WIP)
                 break;
             case 1:
                 currentRightMana -= baseDamageTaken;
-                //WIP
+                //check for game over condition (WIP)
                 break;
         }
-        playerController.RefreshRotation(hittingPoint);
+        playerController.ResetRotation(hittingPoint);
+
+        // Trigger invincibility time
+        //(WIP)
     }
 
     // Returns the mana value of the Wing with the given ID (or -1 if error happens)
-    public int GetWingMana(int wingID)
+    // the id indicates the Wing being asked for
+    /*public int GetWingMana(int id)
     {
-        switch (wingID)
+        switch (id)
         {
             case 0:
                 return currentLeftMana;
@@ -63,5 +78,5 @@ public class PlayerStats : MonoBehaviour
                 return currentRightMana;
         }
         return -1;
-    }
+    }*/
 }
