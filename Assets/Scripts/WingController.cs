@@ -6,6 +6,8 @@ public class WingController : MonoBehaviour
 {
     PlayerStats playerStats;
     private Vector2 basePos;
+    [SerializeField]
+    private int wingID;         //this wing's identifier
 
     // Set up references
     void Awake()
@@ -25,11 +27,12 @@ public class WingController : MonoBehaviour
         this.transform.localPosition = basePos; //fixes displacement when hitting a physical object (WIP - could easily be improved)
     }
 
+    // Sends the Hit event to the PlayerStats with the wing id
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (col.gameObject.tag == "Hazard")
         {
-            Debug.Log("PING");
+            playerStats.Hit(wingID, col.transform.position);    //can be improved by sending the exact point of collision (WIP)
         }
     }
 }
