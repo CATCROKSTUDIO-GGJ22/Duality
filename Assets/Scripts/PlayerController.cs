@@ -24,25 +24,61 @@ public class PlayerController : MonoBehaviour
     private Vector2 direction;      //direction of displacement
     [SerializeField]
     private float repulsionForce;   //force of repulsion when getting hit
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float downtime;         //defines if controls are locked after getting hit and what percentage of the post-hit invincible time are locked (zero is no locked)
+    private float lockedTime;
+    private float timer;
+    [SerializeField]
+    private bool SpinningOnLock;    //defines if Helioid keeps spinning during downtime after getting hit
 
     // Set up references
-    void Awake()
+    private void Awake()
     {
         playerStats = GetComponent<PlayerStats>();
         face = GetComponent<SpriteRenderer>();
     }
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         angular1 = baseAngular;
         angular2 = baseAngular;
+        lockedTime = playerStats.GetLockedTime(downtime);
+        timer = lockedTime;
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        // Rotation
+        lockedTime = playerStats.GetLockedTime(downtime);   //(only for testing and balancing purposes)
+
+        if (SpinningOnLock)
+        {
+            RotateHelioid();
+        }
+
+        if (downtime == 0 || timer == lockedTime)
+        {
+            if (!SpinningOnLock)
+            {
+                RotateHelioid();
+            }
+            DisplaceHelioid();
+        }
+        else
+        {
+            timer += Time.deltaTime;
+            if (timer > lockedTime)
+            {
+                timer = lockedTime;
+            }
+        }
+    }
+
+    // Rotation (helper function)
+    private void RotateHelioid()
+    {
         float newRotation = angular1 * clockwise * Time.deltaTime;
         currentCycle += Mathf.Abs(newRotation);
         int cycles = 0;
@@ -63,8 +99,11 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Cycle has been swapped to " + angular1);
         }
         anchor.Rotate(Vector3.forward * newRotation, Space.Self);
+    }
 
-        // Displacement
+    // Displacement (helper function)
+    private void DisplaceHelioid()
+    {
         if (Input.GetAxisRaw("Horizontal") < 0f && !face.flipX)
         {
             face.flipX = true;
@@ -78,7 +117,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // Updates the rotation cycles
-    public void ResetRotation(Vector2 hittingPoint)
+    public void HittingRoutine(Vector2 hittingPoint)
     {
         // Apply repulsion force
         Vector2 repulsion = new Vector2(this.transform.position.x, this.transform.position.y) - hittingPoint;
@@ -103,5 +142,11 @@ public class PlayerController : MonoBehaviour
 
         // Swap direction of rotation
         clockwise = -clockwise;
+
+        // Lock controls (if downtime > 0)
+        if (downtime > 0)
+        {
+            timer = 0;
+        }
     }
 }

@@ -15,52 +15,225 @@ public class PlayerStats : MonoBehaviour
     private int currentRightMana;   //current Right mana
     [SerializeField]
     private int baseDamageTaken;    //base damage being substracted when getting hit
+    [SerializeField]
+    private int baseRecovery;       //base damage being recovered by potions
+    [SerializeField]
+    private bool continuousBouncing;//defines if can be bounced continuously even on invincibility time (colliders always active)
+    [SerializeField]
+    private float invincibility;    //invincibly time after getting hit (in seconds)
+    private float invTimer;
+    [SerializeField]
+    private float blinking;         //blinking delay (in seconds)
+    private float blinkTimer;
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float blinkAlphaLow;
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float blinkAlphaHigh;
+    private float currentBlinkValue;
+    Collider2D[] hitboxes;
+    SpriteRenderer[] sprites;
 
     // Set up references
-    void Awake()
+    private void Awake()
     {
         playerController = GetComponentInParent<PlayerController>();
+        hitboxes = GetComponentsInChildren<Collider2D>();
+        sprites = GetComponentsInChildren<SpriteRenderer>();
     }
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
+        // Check values
         if (baseLeftMana != baseRightMana)
         {
             Debug.Log("WARNING: Left and Right Wings have different initial values! This might lead to unpredictable results with asynchrony");
         }
+
+        if (blinkAlphaLow > blinkAlphaHigh)
+        {
+            float tempAlpha = blinkAlphaLow;
+            blinkAlphaLow = blinkAlphaHigh;
+            blinkAlphaHigh = tempAlpha;
+            Debug.Log("WARNING: Alpha values are swapped and have been rearranged!");
+        }
+        else if (blinkAlphaLow > blinkAlphaHigh)
+        {
+            Debug.Log("WARNING: Alpha values low and high are the same!");
+        }
+
+        // Initialize stats
         currentLeftMana = baseLeftMana;
         currentRightMana = baseRightMana;
+        invTimer = invincibility;
+        currentBlinkValue = blinkAlphaLow;
+        blinkTimer = 0f;
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        if (invTimer < invincibility)
+        {
+            invTimer += Time.deltaTime;
+            if (invTimer >= invincibility)
+            {
+                ActivateHitboxes(true);
+                invTimer = invincibility;
+                blinkTimer = 0;
+                Debug.Log("Invincibility time has ended!");
+            }
+        }
     }
 
-    // Updates the PlayerStats and sends the changes to the PlayerController
+    // LateUpdate is called right before the render engine
+    private void LateUpdate()
+    {
+        if (invTimer < invincibility)   //if we are in invincibility time
+        {
+            if (blinkTimer == 0f)       //update blinking alpha value
+            {
+                UpdateAlpha(currentBlinkValue);
+            }
+            blinkTimer += Time.deltaTime;
+            if (blinkTimer >= blinking) //swap blinking alpha value
+            {
+                if (currentBlinkValue == blinkAlphaHigh)
+                {
+                    currentBlinkValue = blinkAlphaLow;
+                }
+                else
+                {
+                    currentBlinkValue = blinkAlphaHigh;
+                }
+                blinkTimer = 0f;
+            }
+        }
+        else    //restore alpha
+        {
+            UpdateAlpha(1f);
+        }
+    }
+
+    // Helper function to activate/desactivate hitboxes on all children objects
+    private void ActivateHitboxes(bool activate)
+    {
+        if (continuousBouncing && !activate)
+        {
+            Debug.Log("WARNING: ContinuousBouncing is set to true and Hitboxes won't be deactivate!");
+        }
+        else
+        {
+            foreach (Collider2D hitbox in hitboxes)
+            {
+                if (hitbox.isTrigger)   //it only affects triggers!
+                {
+                    hitbox.enabled = activate;
+                }
+            }
+        }
+    }
+
+    // Updates the Alpha component of every children sprite
+    private void UpdateAlpha(float alpha)
+    {
+        foreach (SpriteRenderer sprite in sprites)
+        {
+            Color c = sprite.GetComponent<SpriteRenderer>().color;
+            c.a = alpha;
+            sprite.GetComponent<SpriteRenderer>().color = c;
+        }
+    }
+
+    // Initialize Shield routine (WIP)
+    private void ActivateShield()
+    {
+        Debug.Log("Bonus SHIELD is UP!");
+        //WIP
+    }
+
+    // Starts Game Over routine (WIP)
+    private void GameOver()
+    {
+        Debug.Log("GAME OVER");
+        //WIP
+    }
+
+    // Updates the PlayerStats (hit) and sends the changes to the PlayerController
     // the id indicates the Wing being hit, which mana is being substracted
     public void Hit(int id, Vector2 hittingPoint)
     {
-        // Substract damage
+        if (invTimer >= invincibility)
+        {
+            // Substract damage
+            switch (id)
+            {
+                case 0:
+                    currentLeftMana -= baseDamageTaken;
+                    if (currentLeftMana <= 0)
+                    {
+                        GameOver();
+                    }
+                    else if (currentLeftMana == currentRightMana)
+                    {
+                        ActivateShield();
+                    }
+                    break;
+
+                case 1:
+                    currentRightMana -= baseDamageTaken;
+                    if (currentRightMana <= 0)
+                    {
+                        GameOver();
+                    }
+                    else if (currentLeftMana == currentRightMana)
+                    {
+                        ActivateShield();
+                    }
+                    break;
+            }
+
+            // Trigger invincibility time
+            ActivateHitboxes(false);
+            invTimer = 0f;
+            Debug.Log("Starting invincibility time!");
+        }
+
+        // Push the Helioid, swap its rotation and start the control's locking time (if applicable)
+        playerController.HittingRoutine(hittingPoint);
+    }
+
+    // Updates the PlayerStats (heal) and sends the changes to the PlayerController
+    public void Heal(int id)
+    {
+        // Adds mana
         switch (id)
         {
             case 0:
-                currentLeftMana -= baseDamageTaken;
-                //check for game over condition (WIP)
+                if (currentLeftMana + baseRecovery <= baseLeftMana)
+                {
+                    currentLeftMana += baseRecovery;
+                }
+                else
+                {
+                    currentLeftMana = baseLeftMana;
+                    Debug.Log("Left Wing is overhealed!");
+                }
                 break;
             case 1:
-                currentRightMana -= baseDamageTaken;
-                //check for game over condition (WIP)
+                if (currentRightMana + baseRecovery <= baseRightMana)
+                {
+                    currentRightMana += baseRecovery;
+                }
+                else
+                {
+                    currentRightMana = baseRightMana;
+                    Debug.Log("Right Wing is overhealed!");
+                }
                 break;
         }
-
-        // Push the Helioid and swap its rotation
-        playerController.ResetRotation(hittingPoint);
-
-        // Trigger invincibility time
-        //(WIP)
     }
 
     // Calculates the asynchrony factor between the two Wings
@@ -70,6 +243,12 @@ public class PlayerStats : MonoBehaviour
     public float CalculateNewAsynchrony()
     {
         return Mathf.Abs((currentLeftMana - currentRightMana) / (float)(baseLeftMana + baseRightMana));
+    }
+
+    // Returns the locked time for controls after getting hit, which is always a invincibility time percentage
+    public float GetLockedTime(float percent)
+    {
+        return Mathf.Abs(percent * invincibility);
     }
 
     // Returns the mana value of the Wing with the given ID (or -1 if error happens)

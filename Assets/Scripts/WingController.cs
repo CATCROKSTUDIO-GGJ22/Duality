@@ -10,19 +10,19 @@ public class WingController : MonoBehaviour
     private int wingID;         //this wing's identifier
 
     // Set up references
-    void Awake()
+    private void Awake()
     {
         playerStats = GetComponentInParent<PlayerStats>();
     }
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         basePos = this.transform.localPosition;
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         this.transform.localPosition = basePos; //fixes displacement when hitting a physical object (WIP - could easily be improved)
     }
