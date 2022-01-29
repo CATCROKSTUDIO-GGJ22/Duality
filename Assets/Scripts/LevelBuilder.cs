@@ -9,6 +9,22 @@ public class LevelBuilder : MonoBehaviour
     Color32 wallPx;         //wall pixel color on the layout
     [SerializeField]
     GameObject wallObj;     //wall game object
+    [SerializeField]
+    Color32 enemyPx;        //enemy pixel color on the layout
+    [SerializeField]
+    GameObject enemyObj;    //enemy game object
+    [SerializeField]
+    Color32 potionPx;       //potion pixel color on the layout
+    [SerializeField]
+    GameObject potionObj;   //potion game object
+    [SerializeField]
+    Color32 goalPx;         //goal pixel color on the layout
+    [SerializeField]
+    GameObject goalObj;     //goal game object
+    [SerializeField]
+    Color32 playerPx;       //player pixel color on the layout
+    [SerializeField]
+    GameObject playerObj;   //player game object
 
     // Set up references
     private void Awake()
@@ -56,9 +72,38 @@ public class LevelBuilder : MonoBehaviour
                 if (pixelC.a != 0)  //if pixel is NOT empty
                 {
                     // Wall object
-                    if (pixelC.Equals(wallPx))
+                    if (pixelC.Equals(wallPx) && wallObj != null)
                     {
-                        Debug.Log("I'm a Wall");
+                        Instantiate(wallObj, new Vector2(i, j), Quaternion.identity);
+                        Debug.Log(wallObj.name + " has been instanciated @(" + i + "," + j + ")");
+                    }
+
+                    // Enemy object
+                    else if (pixelC.Equals(enemyPx) && enemyObj != null)
+                    {
+                        Instantiate(enemyObj, new Vector2(i, j), Quaternion.identity);
+                        Debug.Log(enemyObj.name + " has been instanciated @(" + i + "," + j + ")");
+                    }
+
+                    // Potion object
+                    else if (pixelC.Equals(potionPx) && potionObj != null)
+                    {
+                        Instantiate(potionObj, new Vector2(i, j), Quaternion.identity);
+                        Debug.Log(potionObj.name + " has been instanciated @(" + i + "," + j + ")");
+                    }
+
+                    // Goal object
+                    else if (pixelC.Equals(goalPx) && goalObj != null)
+                    {
+                        Instantiate(goalObj, new Vector2(i, j), Quaternion.identity);
+                        Debug.Log(goalObj.name + " has been instanciated @(" + i + "," + j + ")");
+                    }
+
+                    // Player object
+                    else if (pixelC.Equals(playerPx) && playerObj != null)
+                    {
+                        Instantiate(playerObj, new Vector2(i, j), Quaternion.identity);
+                        Debug.Log(playerObj.name + " has been instanciated @(" + i + "," + j + ")");
                     }
 
                     // Catch layout looseness
