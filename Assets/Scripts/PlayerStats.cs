@@ -299,6 +299,15 @@ public class PlayerStats : MonoBehaviour
         return Mathf.Abs(percent * invincibility);
     }
 
+    public bool IsReady()
+    {
+        if (invTimer < invincibility)
+        {
+            return false;
+        }
+        return true;
+    }
+
     // Returns the mana value of the Wing with the given ID (or -1 if error happens)
     // the id indicates the Wing being asked for
     /*public int GetWingMana(int id)

@@ -30,9 +30,9 @@ public class WingController : MonoBehaviour
     // Sends the Hit event to the PlayerStats with the wing id
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.gameObject.tag == "Hazard")
+        if (playerStats.IsReady() && col.gameObject.tag == "Hazard")    //check if IsReady to prevent collision accumulation on a single frame
         {
-            playerStats.Hit(wingID, col.transform.position);    //can be improved by sending the exact point of collision (WIP)
+            playerStats.Hit(wingID, col.transform.position);            //could be improved by sending the exact point of collision (WIP)
         }
     }
 }
