@@ -60,3 +60,6 @@ TagManager:
   - name: Face
     uniqueID: 710213551
     locked: 0
+  - name: FX
+    uniqueID: 2310884395
+    locked: 0

@@ -27,13 +27,16 @@ public class PlayerStats : MonoBehaviour
     private float blinkTimer;
     [SerializeField]
     [Range(0f, 1f)]
-    private float blinkAlphaLow;
+    private float blinkAlphaLow;    //lowest alpha for blinking objects
     [SerializeField]
     [Range(0f, 1f)]
-    private float blinkAlphaHigh;
+    private float blinkAlphaHigh;   //highest alpha for blinking objects
     private float currentBlinkValue;
     Collider2D[] hitboxes;
     SpriteRenderer[] sprites;
+    [SerializeField]
+    SpriteRenderer shieldFx;
+    private bool shield;
 
     // Set up references
     private void Awake()
@@ -70,6 +73,7 @@ public class PlayerStats : MonoBehaviour
         invTimer = invincibility;
         currentBlinkValue = blinkAlphaLow;
         blinkTimer = 0f;
+        ActivateShield(false);
     }
 
     // Update is called once per frame
@@ -82,7 +86,7 @@ public class PlayerStats : MonoBehaviour
             {
                 ActivateHitboxes(true);
                 invTimer = invincibility;
-                blinkTimer = 0;
+                blinkTimer = 0f;
                 Debug.Log("Invincibility time has ended!");
             }
         }
@@ -91,14 +95,38 @@ public class PlayerStats : MonoBehaviour
     // LateUpdate is called right before the render engine
     private void LateUpdate()
     {
-        if (invTimer < invincibility)   //if we are in invincibility time
+        if (shield)                         //if we have Shield active
         {
-            if (blinkTimer == 0f)       //update blinking alpha value
+            if (blinkTimer == 0f)           //update blinking alpha value
             {
-                UpdateAlpha(currentBlinkValue);
+                UpdateAlpha(shieldFx, currentBlinkValue);
             }
             blinkTimer += Time.deltaTime;
-            if (blinkTimer >= blinking) //swap blinking alpha value
+            if (blinkTimer >= blinking)     //swap blinking alpha value
+            {
+                if (currentBlinkValue == blinkAlphaHigh)
+                {
+                    currentBlinkValue = blinkAlphaLow;
+                }
+                else
+                {
+                    currentBlinkValue = blinkAlphaHigh;
+                }
+                blinkTimer = 0f;
+            }
+        }
+
+        else if (invTimer < invincibility)  //if we are in invincibility time
+        {
+            if (blinkTimer == 0f)           //update blinking alpha value
+            {
+                foreach (SpriteRenderer sprite in sprites)
+                {
+                    UpdateAlpha(sprite, currentBlinkValue);
+                }
+            }
+            blinkTimer += Time.deltaTime;
+            if (blinkTimer >= blinking)     //swap blinking alpha value
             {
                 if (currentBlinkValue == blinkAlphaHigh)
                 {
@@ -113,7 +141,13 @@ public class PlayerStats : MonoBehaviour
         }
         else    //restore alpha
         {
-            UpdateAlpha(1f);
+            foreach (SpriteRenderer sprite in sprites)
+            {
+                UpdateAlpha(sprite, 1f);
+            }
+
+            //restore next blinking value to lowest
+            currentBlinkValue = blinkAlphaLow;
         }
     }
 
@@ -136,22 +170,26 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
-    // Updates the Alpha component of every children sprite
-    private void UpdateAlpha(float alpha)
+    // Updates the Alpha component of a given sprite
+    private void UpdateAlpha(SpriteRenderer sprite, float alpha)
     {
-        foreach (SpriteRenderer sprite in sprites)
-        {
-            Color c = sprite.GetComponent<SpriteRenderer>().color;
-            c.a = alpha;
-            sprite.GetComponent<SpriteRenderer>().color = c;
-        }
+        Color c = sprite.color;
+        c.a = alpha;
+        sprite.color = c;
     }
 
     // Initialize Shield routine (WIP)
-    private void ActivateShield()
+    private void ActivateShield(bool activate)
     {
-        Debug.Log("Bonus SHIELD is UP!");
-        //WIP
+        // Update Shield status
+        shield = activate;
+
+        // Reset blinking
+        currentBlinkValue = blinkAlphaLow;
+        blinkTimer = 0f;
+
+        // Update sprite visibility
+        shieldFx.enabled = activate;
     }
 
     // Starts Game Over routine (WIP)
@@ -167,38 +205,48 @@ public class PlayerStats : MonoBehaviour
     {
         if (invTimer >= invincibility)
         {
-            // Substract damage
-            switch (id)
+            if (shield) //if Shield is UP
             {
-                case 0:
-                    currentLeftMana -= baseDamageTaken;
-                    if (currentLeftMana <= 0)
-                    {
-                        GameOver();
-                    }
-                    else if (currentLeftMana == currentRightMana)
-                    {
-                        ActivateShield();
-                    }
-                    break;
-
-                case 1:
-                    currentRightMana -= baseDamageTaken;
-                    if (currentRightMana <= 0)
-                    {
-                        GameOver();
-                    }
-                    else if (currentLeftMana == currentRightMana)
-                    {
-                        ActivateShield();
-                    }
-                    break;
+                ActivateShield(false);
+                Debug.Log("Bonus SHIELD is DOWN!");
             }
+            else
+            {
+                // Substract damage
+                switch (id)
+                {
+                    case 0:
+                        currentLeftMana -= baseDamageTaken;
+                        if (currentLeftMana <= 0)
+                        {
+                            GameOver();
+                        }
+                        else if (currentLeftMana == currentRightMana)
+                        {
+                            ActivateShield(true);
+                            Debug.Log("Bonus SHIELD is UP!");
+                        }
+                        break;
 
-            // Trigger invincibility time
-            ActivateHitboxes(false);
-            invTimer = 0f;
-            Debug.Log("Starting invincibility time!");
+                    case 1:
+                        currentRightMana -= baseDamageTaken;
+                        if (currentRightMana <= 0)
+                        {
+                            GameOver();
+                        }
+                        else if (currentLeftMana == currentRightMana)
+                        {
+                            ActivateShield(true);
+                            Debug.Log("Bonus SHIELD is UP!");
+                        }
+                        break;
+                }
+
+                // Trigger invincibility time
+                ActivateHitboxes(false);
+                invTimer = 0f;
+                Debug.Log("Starting invincibility time!");
+            }
         }
 
         // Push the Helioid, swap its rotation and start the control's locking time (if applicable)
