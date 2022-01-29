@@ -17,8 +17,8 @@ public class PlayerController : MonoBehaviour
     private float currentCycle;     //counter variable for the rotation cycle
     [SerializeField]
     private bool resetCycle;        //defines if the rotation cycle is reset to always the slowest or continues after getting hit
-    private int clockwise = -1;     //direction of the rotation (-1 is clockwise)
-    private float asynchrony = 0f;  //difference factor between Wings
+    private int clockwise;          //direction of the rotation (-1 is clockwise)
+    private float asynchrony;       //difference factor between Wings
     [SerializeField]
     private Transform anchor;       //arm's holder
     private Vector2 direction;      //direction of displacement
@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour
     private float lockedTime;
     private float timer;
     [SerializeField]
-    private bool SpinningOnLock;    //defines if Helioid keeps spinning during downtime after getting hit
+    private bool spinningOnLock;    //defines if Helioid keeps spinning during downtime after getting hit
 
     // Set up references
     private void Awake()
@@ -42,6 +42,15 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        // Check values
+        if (resetCycle == spinningOnLock)
+        {
+            Debug.Log("WARNING: Reset Cycle and Spining On Lock are the same! This might lead to anti-intuitive behavior");
+        }
+
+        // Initialize stats
+        clockwise = -1;
+        asynchrony = 0f;
         angular1 = baseAngular;
         angular2 = baseAngular;
         lockedTime = playerStats.GetLockedTime(downtime);
@@ -53,14 +62,14 @@ public class PlayerController : MonoBehaviour
     {
         lockedTime = playerStats.GetLockedTime(downtime);   //(only for testing and balancing purposes)
 
-        if (SpinningOnLock)
+        if (spinningOnLock)
         {
             RotateHelioid();
         }
 
         if (downtime == 0 || timer == lockedTime)
         {
-            if (!SpinningOnLock)
+            if (!spinningOnLock)
             {
                 RotateHelioid();
             }
@@ -142,6 +151,7 @@ public class PlayerController : MonoBehaviour
 
         // Swap direction of rotation
         clockwise = -clockwise;
+        Debug.Log("Rotation swaps");
 
         // Lock controls (if downtime > 0)
         if (downtime > 0)
