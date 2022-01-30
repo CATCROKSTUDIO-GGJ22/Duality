@@ -14,10 +14,18 @@ public class GridBuilder : MonoBehaviour
     private GameObject wallEX;
     private GameObject wallSX;
     private GameObject wallWX;
+    private GameObject wallN;
+    private GameObject wallE;
+    private GameObject wallS;
+    private GameObject wallW;
     [SerializeField]
     private bool[] neighbors = new bool[4]; // N-E-S-W
     [SerializeField]
     private bool adaptative;        //if this block is adaptative
+    [SerializeField]
+    private bool extendedConcave;   //if this block is extended adaptative on concave blocks (implies adaptative)
+    [SerializeField]
+    private bool extendedConvex;    //if this block is extended adaptative on convex blocks (implies adaptative)
 
     // Set up references
     private void Awake()
@@ -32,11 +40,30 @@ public class GridBuilder : MonoBehaviour
         wallEX = Resources.Load("Prefabs/WallEX") as GameObject;
         wallSX = Resources.Load("Prefabs/WallSX") as GameObject;
         wallWX = Resources.Load("Prefabs/WallWX") as GameObject;
+        wallN = Resources.Load("Prefabs/WallN") as GameObject;
+        wallE = Resources.Load("Prefabs/WallE") as GameObject;
+        wallS = Resources.Load("Prefabs/WallS") as GameObject;
+        wallW = Resources.Load("Prefabs/WallW") as GameObject;
     }
 
     // Start is called before the first frame update
     private void Start()
     {
+        // Check values
+        if (!adaptative)
+        {
+            if (extendedConcave)
+            {
+                extendedConcave = false;
+                Debug.Log("WARNING: this Block isn't adaptative! Extended Concave has been deactivated");
+            }
+            if (extendedConvex)
+            {
+                extendedConvex = false;
+                Debug.Log("WARNING: this Block isn't adaptative! Extended Convex has been deactivated");
+            }
+        }
+
         // Make sure self collision is active
         Physics2D.queriesStartInColliders = true;
 
@@ -52,7 +79,10 @@ public class GridBuilder : MonoBehaviour
         }
 
         // Instanciate object
-        Instantiate(spawnObj, this.transform.position, Quaternion.identity);
+        if (spawnObj != null)
+        {
+            Instantiate(spawnObj, this.transform.position, Quaternion.identity);
+        }
     }
 
     // Update is called once per frame
@@ -64,7 +94,7 @@ public class GridBuilder : MonoBehaviour
     // Selects an object based on the boolean array
     private void SelectObject()
     {
-        // N-E-S-W
+        // Base N-E-S-W
 
         // SE
         if (!neighbors[0] && neighbors[1] && neighbors[2] && !neighbors[3])
@@ -90,31 +120,64 @@ public class GridBuilder : MonoBehaviour
             spawnObj = wallNE;
         }
 
-        // xESW
-        else if (!neighbors[0] && neighbors[1] && neighbors[2] && neighbors[3])
+        // Extended Concave
+        if (extendedConcave)
         {
-            spawnObj = wallNX;
+            // xESW
+            if (!neighbors[0] && neighbors[1] && neighbors[2] && neighbors[3])
+            {
+                spawnObj = wallNX;
+            }
+
+            // NxSW
+            else if (neighbors[0] && !neighbors[1] && neighbors[2] && neighbors[3])
+            {
+                spawnObj = wallEX;
+            }
+
+            // NExW
+            else if (neighbors[0] && neighbors[1] && !neighbors[2] && neighbors[3])
+            {
+                spawnObj = wallSX;
+            }
+
+            // NESx
+            else if (neighbors[0] && neighbors[1] && neighbors[2] && !neighbors[3])
+            {
+                spawnObj = wallWX;
+            }
         }
 
-        // NxSW
-        else if (neighbors[0] && !neighbors[1] && neighbors[2] && neighbors[3])
+        // Extended Convex
+        if (extendedConvex)
         {
-            spawnObj = wallEX;
+            // N only
+            if (neighbors[0] && !neighbors[1] && !neighbors[2] && !neighbors[3])
+            {
+                spawnObj = wallN;
+            }
+
+            // E only
+            else if (!neighbors[0] && neighbors[1] && !neighbors[2] && !neighbors[3])
+            {
+                spawnObj = wallE;
+            }
+
+            // S only
+            else if (!neighbors[0] && !neighbors[1] && neighbors[2] && !neighbors[3])
+            {
+                spawnObj = wallS;
+            }
+
+            // W only
+            else if (!neighbors[0] && !neighbors[1] && !neighbors[2] && neighbors[3])
+            {
+                spawnObj = wallW;
+            }
         }
 
-        // NExW
-        else if (neighbors[0] && neighbors[1] && !neighbors[2] && neighbors[3])
-        {
-            spawnObj = wallSX;
-        }
-
-        // NESx
-        else if (neighbors[0] && neighbors[1] && neighbors[2] && !neighbors[3])
-        {
-            spawnObj = wallWX;
-        }
-
-        else
+        // if selected is still null, select base object
+        if (spawnObj == null)
         {
             spawnObj = wall0;
         }

@@ -243,7 +243,7 @@ GameObject:
   - component: {fileID: 4702878064256856166}
   - component: {fileID: 4702878064256856160}
   - component: {fileID: 4702878064256856162}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Helioid
   m_TagString: Player
   m_Icon: {fileID: 0}
