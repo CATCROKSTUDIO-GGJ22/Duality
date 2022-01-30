@@ -238,7 +238,7 @@ MonoBehaviour:
   wallPx:
     serializedVersion: 2
     rgba: 4278190080
-  wallObj: {fileID: 8789835824156779502, guid: ada7c0808e9434d478f9c3de7c4fb3b8, type: 3}
+  wallObj: {fileID: 260696293946586327, guid: dd9e7726a8f89fd42bc9c7bfa57fa66e, type: 3}
   enemyPx:
     serializedVersion: 2
     rgba: 4278190335
