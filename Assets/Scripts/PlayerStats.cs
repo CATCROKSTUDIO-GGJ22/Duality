@@ -310,7 +310,7 @@ public class PlayerStats : MonoBehaviour
 
     // Returns the mana value of the Wing with the given ID (or -1 if error happens)
     // the id indicates the Wing being asked for
-    /*public int GetWingMana(int id)
+    public int GetWingMana(int id)
     {
         switch (id)
         {
@@ -320,5 +320,5 @@ public class PlayerStats : MonoBehaviour
                 return currentRightMana;
         }
         return -1;
-    }*/
+    }
 }
