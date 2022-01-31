@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4852695807398616798
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4852695807398616792}
+  - component: {fileID: 4852695807398616799}
+  m_Layer: 0
+  m_Name: LevelManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4852695807398616792
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4852695807398616798}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.5925321, y: 0.49666283, z: -9.024195}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4852695807398616799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4852695807398616798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95a4c0fe10486b94b9ec3c0983b512de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wallPx:
+    serializedVersion: 2
+    rgba: 4278190080
+  wallObj: {fileID: 260696293946586327, guid: dd9e7726a8f89fd42bc9c7bfa57fa66e, type: 3}
+  enemyPx:
+    serializedVersion: 2
+    rgba: 4278190335
+  enemyObj: {fileID: 7662733788165869635, guid: 8953ce13afc53bb44ab139f370154195, type: 3}
+  potionPx:
+    serializedVersion: 2
+    rgba: 4278255360
+  potionObj: {fileID: 436598157401977980, guid: a4cd77f1f7ec92c4ab86446f265a0b10, type: 3}
+  goalPx:
+    serializedVersion: 2
+    rgba: 4294902015
+  goalObj: {fileID: 3710209689909853569, guid: 49592dfbf4c4e224fa2db2e994f44ca7, type: 3}
+  playerPx:
+    serializedVersion: 2
+    rgba: 4294901760
+  playerObj: {fileID: 4702878064256856167, guid: f49fb30d80e8f1941916da97214b4f9d, type: 3}

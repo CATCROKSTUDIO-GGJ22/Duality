@@ -286,6 +286,12 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
+    // Calls the Game Manager to end the level
+    public void Teleport()
+    {
+        gameManager.LevelEndingRoutine(true);
+    }
+
     // Calculates the asynchrony factor between the two Wings
     // the more mana difference, the more angular asynchrony between Wings
     // asynchrony is always balanced (which means a 70% asynchrony translates into +35% -35% with independence between the specific stats - only cares about difference)

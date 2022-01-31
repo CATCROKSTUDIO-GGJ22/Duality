@@ -124,5 +124,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   neighbors: 00000000
   adaptative: 1
-  extendedConcave: 0
-  extendedConvex: 0
+  extendedConcave: 1
+  extendedConvex: 1

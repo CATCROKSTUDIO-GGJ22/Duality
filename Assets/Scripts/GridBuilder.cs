@@ -31,19 +31,19 @@ public class GridBuilder : MonoBehaviour
     private void Awake()
     {
         // Load resources
-        wall0 = Resources.Load("Prefabs/Wall0") as GameObject;
-        wallSE = Resources.Load("Prefabs/WallSE") as GameObject;
-        wallSW = Resources.Load("Prefabs/WallSW") as GameObject;
-        wallNW = Resources.Load("Prefabs/WallNW") as GameObject;
-        wallNE = Resources.Load("Prefabs/WallNE") as GameObject;
-        wallNX = Resources.Load("Prefabs/WallNX") as GameObject;
-        wallEX = Resources.Load("Prefabs/WallEX") as GameObject;
-        wallSX = Resources.Load("Prefabs/WallSX") as GameObject;
-        wallWX = Resources.Load("Prefabs/WallWX") as GameObject;
-        wallN = Resources.Load("Prefabs/WallN") as GameObject;
-        wallE = Resources.Load("Prefabs/WallE") as GameObject;
-        wallS = Resources.Load("Prefabs/WallS") as GameObject;
-        wallW = Resources.Load("Prefabs/WallW") as GameObject;
+        wall0 = Resources.Load("Prefabs/Tiles/Wall0") as GameObject;
+        wallSE = Resources.Load("Prefabs/Tiles/WallSE") as GameObject;
+        wallSW = Resources.Load("Prefabs/Tiles/WallSW") as GameObject;
+        wallNW = Resources.Load("Prefabs/Tiles/WallNW") as GameObject;
+        wallNE = Resources.Load("Prefabs/Tiles/WallNE") as GameObject;
+        wallNX = Resources.Load("Prefabs/Tiles/WallNX") as GameObject;
+        wallEX = Resources.Load("Prefabs/Tiles/WallEX") as GameObject;
+        wallSX = Resources.Load("Prefabs/Tiles/WallSX") as GameObject;
+        wallWX = Resources.Load("Prefabs/Tiles/WallWX") as GameObject;
+        wallN = Resources.Load("Prefabs/Tiles/WallN") as GameObject;
+        wallE = Resources.Load("Prefabs/Tiles/WallE") as GameObject;
+        wallS = Resources.Load("Prefabs/Tiles/WallS") as GameObject;
+        wallW = Resources.Load("Prefabs/Tiles/WallW") as GameObject;
     }
 
     // Start is called before the first frame update

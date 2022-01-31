@@ -396,12 +396,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80c3f5470caea0d4399e1a355ccfc8cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseLeftMana: 100
+  baseLeftMana: 5
   currentLeftMana: 0
-  baseRightMana: 100
+  baseRightMana: 5
   currentRightMana: 0
-  baseDamageTaken: 10
-  baseRecovery: 10
+  baseDamageTaken: 1
+  baseRecovery: 1
   continuousBouncing: 0
   invincibility: 3
   blinking: 0.02

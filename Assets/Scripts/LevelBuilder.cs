@@ -30,7 +30,7 @@ public class LevelBuilder : MonoBehaviour
     private void Awake()
     {
         // Load resources
-        levelLayout = Resources.Load("LevelLayouts/Test") as Texture2D;
+        levelLayout = Resources.Load("LevelLayouts/SampleLevel") as Texture2D;
     }
 
     // Start is called before the first frame update
