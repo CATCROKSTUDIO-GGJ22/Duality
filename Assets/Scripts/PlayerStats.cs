@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
+    GameManager gameManager;
     PlayerController playerController;
     [SerializeField]
     private int baseLeftMana;       //base mana for the Left wing
@@ -41,6 +42,7 @@ public class PlayerStats : MonoBehaviour
     // Set up references
     private void Awake()
     {
+        gameManager = GameObject.FindGameObjectWithTag("GM").GetComponent<GameManager>();
         playerController = GetComponentInParent<PlayerController>();
         hitboxes = GetComponentsInChildren<Collider2D>();
         sprites = GetComponentsInChildren<SpriteRenderer>();
@@ -196,7 +198,7 @@ public class PlayerStats : MonoBehaviour
     private void GameOver()
     {
         Debug.Log("GAME OVER");
-        //WIP
+        gameManager.LevelEndingRoutine(false);
     }
 
     // Updates the PlayerStats (hit) and sends the changes to the PlayerController
