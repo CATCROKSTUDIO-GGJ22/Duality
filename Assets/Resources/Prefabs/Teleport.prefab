@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 3710209689909853572}
   - component: {fileID: 3710209689909853575}
   - component: {fileID: 3710209689909853574}
+  - component: {fileID: 4014565140580553837}
   m_Layer: 6
-  m_Name: Goal
+  m_Name: Teleport
   m_TagString: Goal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -109,3 +110,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &4014565140580553837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3710209689909853569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0d2fd06fb00a5d4bbeb534afb673c24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextId: 0
