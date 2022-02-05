@@ -18,11 +18,12 @@ public class EnemyController : MonoBehaviour
     private bool turnsBackOnPlayer; //if turns back when colliding with the Player
     [SerializeField]
     private bool destroyedOnHit;    //if it's destroyed after hitting the player
+    SpriteRenderer sprite;
 
     // Set up references
     private void Awake()
     {
-
+        sprite = GetComponent<SpriteRenderer>();
     }
 
     // Start is called before the first frame update
@@ -56,10 +57,24 @@ public class EnemyController : MonoBehaviour
             }
 
             // Horizontal displacement
-            if (verticalSpeed > 0f)
+            if (horizontalSpeed > 0f)
             {
                 this.transform.Translate(this.transform.right * horizontalDirection * horizontalSpeed * Time.deltaTime);
             }
+        }
+    }
+
+    // LateUpdate is called right before the render engine
+    private void LateUpdate()
+    {
+        // Flip sprite towars horizontal movement direction
+        if (horizontalDirection > 0)
+        {
+            sprite.flipX = false;
+        }
+        else
+        {
+            sprite.flipX = true;
         }
     }
 
@@ -68,19 +83,33 @@ public class EnemyController : MonoBehaviour
         // Player
         if (turnsBackOnPlayer && col.gameObject.tag == "Player")
         {
-            Debug.Log("TURN BACK");//WIP
+            TurnBack();
         }
 
         // Walls/Enemies
         else if (turnsBackOnWalls && col.gameObject.tag == "Hazard")
         {
-            Debug.Log("TURN BACK");//WIP
+            TurnBack();
         }
 
         // Borders
         else if (col.gameObject.tag == "Border")    //it should always turn back on borders!
         {
-            Debug.Log("TURN BACK");//WIP
+            TurnBack();
+        }
+    }
+
+    // Helper function for turning back ater a hit
+    private void TurnBack()
+    {
+        if (verticalSpeed > 0f)
+        {
+            verticalDirection = -verticalDirection;
+        }
+
+        if (horizontalSpeed > 0f)
+        {
+            horizontalDirection = -horizontalDirection;
         }
     }
 }
