@@ -57,6 +57,7 @@ public class GridBuilder : MonoBehaviour
                 extendedConcave = false;
                 Debug.Log("WARNING: this Block isn't adaptative! Extended Concave has been deactivated");
             }
+
             if (extendedConvex)
             {
                 extendedConvex = false;
@@ -64,7 +65,7 @@ public class GridBuilder : MonoBehaviour
             }
         }
 
-        // Make sure self collision is active
+        /*// Make sure self collision is active
         Physics2D.queriesStartInColliders = true;
 
         // Determine object
@@ -82,13 +83,69 @@ public class GridBuilder : MonoBehaviour
         if (spawnObj != null)
         {
             Instantiate(spawnObj, this.transform.position, Quaternion.identity);
-        }
+        }*/
     }
 
     // Update is called once per frame
     private void Update()
     {
         
+    }
+
+    // Looks for neighbor blocks and updates the boolean array
+    private void SearchNeighbors()
+    {
+        // N
+        RaycastHit2D hitN = GetFirstRaycastHit(this.transform.up);
+        if (hitN.distance < 1f)
+        {
+            neighbors[0] = true;
+            Debug.DrawRay(this.transform.position, this.transform.up, Color.red, 1f);
+        }
+        else
+        {
+            neighbors[0] = false;
+            Debug.DrawRay(this.transform.position, this.transform.up, Color.yellow, 1f);
+        }
+
+        // E
+        RaycastHit2D hitE = GetFirstRaycastHit(this.transform.right);
+        if (hitE.distance < 1f)
+        {
+            neighbors[1] = true;
+            Debug.DrawRay(this.transform.position, this.transform.right, Color.red, 1f);
+        }
+        else
+        {
+            neighbors[1] = false;
+            Debug.DrawRay(this.transform.position, this.transform.right, Color.yellow, 1f);
+        }
+
+        // S
+        RaycastHit2D hitS = GetFirstRaycastHit(this.transform.up * -1);
+        if (hitS.distance < 1f)
+        {
+            neighbors[2] = true;
+            Debug.DrawRay(this.transform.position, this.transform.up * -1, Color.red, 1f);
+        }
+        else
+        {
+            neighbors[2] = false;
+            Debug.DrawRay(this.transform.position, this.transform.up * -1, Color.yellow, 1f);
+        }
+
+        // W
+        RaycastHit2D hitW = GetFirstRaycastHit(this.transform.right * -1);
+        if (hitW.distance < 1f)
+        {
+            neighbors[3] = true;
+            Debug.DrawRay(this.transform.position, this.transform.right * -1, Color.red, 1f);
+        }
+        else
+        {
+            neighbors[3] = false;
+            Debug.DrawRay(this.transform.position, this.transform.right * -1, Color.yellow, 1f);
+        }
     }
 
     // Selects an object based on the boolean array
@@ -183,62 +240,6 @@ public class GridBuilder : MonoBehaviour
         }
     }
 
-    // Looks for neighbor blocks and updates the boolean array
-    private void SearchNeighbors()
-    {
-        // N
-        RaycastHit2D hitN = GetFirstRaycastHit(this.transform.up);
-        if (hitN.distance < 1f)
-        {
-            neighbors[0] = true;
-            Debug.DrawRay(this.transform.position, this.transform.up, Color.red, 1f);
-        }
-        else
-        {
-            neighbors[0] = false;
-            Debug.DrawRay(this.transform.position, this.transform.up, Color.yellow, 1f);
-        }
-
-        // E
-        RaycastHit2D hitE = GetFirstRaycastHit(this.transform.right);
-        if (hitE.distance < 1f)
-        {
-            neighbors[1] = true;
-            Debug.DrawRay(this.transform.position, this.transform.right, Color.red, 1f);
-        }
-        else
-        {
-            neighbors[1] = false;
-            Debug.DrawRay(this.transform.position, this.transform.right, Color.yellow, 1f);
-        }
-
-        // S
-        RaycastHit2D hitS = GetFirstRaycastHit(this.transform.up * -1);
-        if (hitS.distance < 1f)
-        {
-            neighbors[2] = true;
-            Debug.DrawRay(this.transform.position, this.transform.up * -1, Color.red, 1f);
-        }
-        else
-        {
-            neighbors[2] = false;
-            Debug.DrawRay(this.transform.position, this.transform.up * -1, Color.yellow, 1f);
-        }
-
-        // W
-        RaycastHit2D hitW = GetFirstRaycastHit(this.transform.right * -1);
-        if (hitW.distance < 1f)
-        {
-            neighbors[3] = true;
-            Debug.DrawRay(this.transform.position, this.transform.right * -1, Color.red, 1f);
-        }
-        else
-        {
-            neighbors[3] = false;
-            Debug.DrawRay(this.transform.position, this.transform.right * -1, Color.yellow, 1f);
-        }
-    }
-
     // This helper function fixes a bug where self concave colliders are always detected as first hit
     private RaycastHit2D GetFirstRaycastHit(Vector2 direction)
     {
@@ -247,5 +248,31 @@ public class GridBuilder : MonoBehaviour
         Physics2D.RaycastNonAlloc(this.transform.position, direction, hits);
         //hits[0] will always be the Collider2D you are casting from.
         return hits[1];
+    }
+
+    // Determine which wall tile will be spawn
+    public void DetermineSelf()
+    {
+        if (adaptative)
+        {
+            SearchNeighbors();
+            SelectObject();
+        }
+        else
+        {
+            spawnObj = wall0;
+        }
+    }
+
+    // Instanciate object then destroy self
+    public void Spawn()
+    {
+        if (spawnObj != null)
+        {
+            Instantiate(spawnObj, this.transform.position, Quaternion.identity);
+            Debug.Log(spawnObj.name + " has been instanciated @(" + this.transform.position + ")");
+        }
+
+        Destroy(this.gameObject);
     }
 }

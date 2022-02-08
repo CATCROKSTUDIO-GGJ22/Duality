@@ -126,3 +126,4 @@ MonoBehaviour:
   adaptative: 1
   extendedConcave: 1
   extendedConvex: 1
+  thickBorders: 0

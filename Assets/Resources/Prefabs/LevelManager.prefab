@@ -43,6 +43,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95a4c0fe10486b94b9ec3c0983b512de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelLayout: {fileID: 0}
+  forceBorders: 1
+  thickBorders: 1
+  borderObj: {fileID: 8789835824156779502, guid: ada7c0808e9434d478f9c3de7c4fb3b8, type: 3}
   wallPx:
     serializedVersion: 2
     rgba: 4278190080

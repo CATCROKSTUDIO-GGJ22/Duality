@@ -19,6 +19,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     private bool destroyedOnHit;    //if it's destroyed after hitting the player
     SpriteRenderer sprite;
+    private bool hit;   //makes sure it will only turn back once per frame (despite the number of colliders it enters)
 
     // Set up references
     private void Awake()
@@ -44,6 +45,8 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        hit = false;    //resets control boolean
+
         if (sinusoidal)
         {
             //WIP
@@ -81,9 +84,10 @@ public class EnemyController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D col)
     {
         // Player
-        if (turnsBackOnPlayer && col.gameObject.tag == "Player")
+        if (turnsBackOnPlayer && col.gameObject.tag == "Player")    //UNREACHABLE because the player is pushed bach before (WIP)
         {
             TurnBack();
+            //DESTROY?? (WIP)
         }
 
         // Walls/Enemies
@@ -92,24 +96,25 @@ public class EnemyController : MonoBehaviour
             TurnBack();
         }
 
-        // Borders
-        else if (col.gameObject.tag == "Border")    //it should always turn back on borders!
-        {
-            TurnBack();
-        }
+        //borders have been suppressed, check for level limits! (WIP)
     }
 
     // Helper function for turning back ater a hit
     private void TurnBack()
     {
-        if (verticalSpeed > 0f)
+        if (!hit)
         {
-            verticalDirection = -verticalDirection;
-        }
+            if (verticalSpeed > 0f)
+            {
+                verticalDirection = -verticalDirection;
+            }
 
-        if (horizontalSpeed > 0f)
-        {
-            horizontalDirection = -horizontalDirection;
+            if (horizontalSpeed > 0f)
+            {
+                horizontalDirection = -horizontalDirection;
+            }
+
+            hit = true;
         }
     }
 }

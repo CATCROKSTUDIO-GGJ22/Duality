@@ -4,7 +4,14 @@ using UnityEngine;
 
 public class LevelBuilder : MonoBehaviour
 {
+    [SerializeField]
     Texture2D levelLayout;
+    [SerializeField]
+    private bool forceBorders;  //if forces to place wall tiles on borders
+    [SerializeField]
+    private bool thickBorders;  //if the level borders should be always square blocks
+    [SerializeField]
+    GameObject borderObj;   //border game object
     [SerializeField]
     Color32 wallPx;         //wall pixel color on the layout
     [SerializeField]
@@ -25,12 +32,16 @@ public class LevelBuilder : MonoBehaviour
     Color32 playerPx;       //player pixel color on the layout
     [SerializeField]
     GameObject playerObj;   //player game object
+    List<GameObject> grid = new List<GameObject>(); //wallPx grid list
 
     // Set up references
     private void Awake()
     {
         // Load resources
-        levelLayout = Resources.Load("LevelLayouts/SampleLevel") as Texture2D;
+        if (levelLayout == null)    //loads the Test levels if no one is selected!
+        {
+            levelLayout = Resources.Load("LevelLayouts/Test") as Texture2D;
+        }
     }
 
     // Start is called before the first frame update
@@ -46,10 +57,29 @@ public class LevelBuilder : MonoBehaviour
             Debug.Log("Level layout: " + levelLayout + " (" + levelLayout.width + "x" + levelLayout.height + " px)");
         }
 
+        // Check values
+        if (thickBorders && !forceBorders)
+        {
+            thickBorders = false;
+            Debug.Log("WARNING: Thick Borders are set True but Force Borders is deactivated! Thick Borders will be ignored");
+        }
+
         // Build the level
         if (levelLayout != null)
         {
             BuildLevel();
+            
+            // Determine wall tiles
+            foreach (GameObject tile in grid)
+            {
+                tile.GetComponent<GridBuilder>().DetermineSelf();
+            }
+
+            // Instanciate final walls
+            foreach (GameObject tile in grid)
+            {
+                tile.GetComponent<GridBuilder>().Spawn();
+            }
         }
     }
 
@@ -66,50 +96,71 @@ public class LevelBuilder : MonoBehaviour
         {
             for (int j = 0; j < levelLayout.height; j++)
             {
-                // Get color from pixel
-                Color32 pixelC = levelLayout.GetPixel(i, j);
-
-                if (pixelC.a != 0)  //if pixel is NOT empty
+                // If it's a border
+                if (forceBorders && (i == 0 || i == levelLayout.width - 1 || j == 0 || j == levelLayout.height - 1))
                 {
-                    // Wall object
-                    if (pixelC.Equals(wallPx) && wallObj != null)
+                    if (thickBorders && borderObj != null)
+                    {
+                        Instantiate(borderObj, new Vector2(i, j), Quaternion.identity);
+                        Debug.Log(borderObj.name + " has been instanciated @(" + i + "," + j + ")");
+                    }
+
+                    else
                     {
                         Instantiate(wallObj, new Vector2(i, j), Quaternion.identity);
                         Debug.Log(wallObj.name + " has been instanciated @(" + i + "," + j + ")");
                     }
+                }
 
-                    // Enemy object
-                    else if (pixelC.Equals(enemyPx) && enemyObj != null)
-                    {
-                        Instantiate(enemyObj, new Vector2(i, j), Quaternion.identity);
-                        Debug.Log(enemyObj.name + " has been instanciated @(" + i + "," + j + ")");
-                    }
+                else
+                {
+                    // Get color from pixel
+                    Color32 pixelC = levelLayout.GetPixel(i, j);
 
-                    // Potion object
-                    else if (pixelC.Equals(potionPx) && potionObj != null)
+                    if (pixelC.a != 0)  //if pixel is NOT empty
                     {
-                        Instantiate(potionObj, new Vector2(i, j), Quaternion.identity);
-                        Debug.Log(potionObj.name + " has been instanciated @(" + i + "," + j + ")");
-                    }
+                        // Wall object
+                        if (pixelC.Equals(wallPx) && wallObj != null)
+                        {
+                            //GameObject ob = Instantiate(wallObj, new Vector2(i, j), Quaternion.identity);
+                            grid.Add(Instantiate(wallObj, new Vector2(i, j), Quaternion.identity));
+                            Debug.Log(wallObj.name + " has been instanciated @(" + i + "," + j + ")");
+                            grid.Add(Instantiate(wallObj, new Vector2(i, j), Quaternion.identity));
+                        }
 
-                    // Goal object
-                    else if (pixelC.Equals(goalPx) && goalObj != null)
-                    {
-                        Instantiate(goalObj, new Vector2(i, j), Quaternion.identity);
-                        Debug.Log(goalObj.name + " has been instanciated @(" + i + "," + j + ")");
-                    }
+                        // Enemy object
+                        else if (pixelC.Equals(enemyPx) && enemyObj != null)
+                        {
+                            Instantiate(enemyObj, new Vector2(i, j), Quaternion.identity);
+                            Debug.Log(enemyObj.name + " has been instanciated @(" + i + "," + j + ")");
+                        }
 
-                    // Player object
-                    else if (pixelC.Equals(playerPx) && playerObj != null)
-                    {
-                        Instantiate(playerObj, new Vector2(i, j), Quaternion.identity);
-                        Debug.Log(playerObj.name + " has been instanciated @(" + i + "," + j + ")");
-                    }
+                        // Potion object
+                        else if (pixelC.Equals(potionPx) && potionObj != null)
+                        {
+                            Instantiate(potionObj, new Vector2(i, j), Quaternion.identity);
+                            Debug.Log(potionObj.name + " has been instanciated @(" + i + "," + j + ")");
+                        }
 
-                    // Catch layout looseness
-                    else
-                    {
-                        Debug.Log("Px (" + i + "," + j + ") can't be interpreted!");
+                        // Goal object
+                        else if (pixelC.Equals(goalPx) && goalObj != null)
+                        {
+                            Instantiate(goalObj, new Vector2(i, j), Quaternion.identity);
+                            Debug.Log(goalObj.name + " has been instanciated @(" + i + "," + j + ")");
+                        }
+
+                        // Player object
+                        else if (pixelC.Equals(playerPx) && playerObj != null)
+                        {
+                            Instantiate(playerObj, new Vector2(i, j), Quaternion.identity);
+                            Debug.Log(playerObj.name + " has been instanciated @(" + i + "," + j + ")");
+                        }
+
+                        // Catch layout looseness
+                        else
+                        {
+                            Debug.Log("Px (" + i + "," + j + ") can't be interpreted!");
+                        }
                     }
                 }
             }
