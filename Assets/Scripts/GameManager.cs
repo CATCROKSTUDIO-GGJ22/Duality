@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
     private Text text;
     private bool next;
     private bool gameover;
+    [SerializeField]
+    private Vector2Int worldSize;               // The world size in world units [width(int)/height(int)]
 
     private void Awake()
     {
@@ -64,6 +66,16 @@ public class GameManager : MonoBehaviour
             }
             text.enabled = true;
         }
+    }
+
+    public Vector2Int GetWorldSize()
+    {
+        return worldSize;
+    }
+
+    public void SetWorldSize(int width, int height)
+    {
+        worldSize = new Vector2Int(width, height);
     }
 
     public void LevelEndingRoutine(bool success)

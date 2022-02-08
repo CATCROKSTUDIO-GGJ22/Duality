@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class LevelBuilder : MonoBehaviour
 {
+    GameManager gameManager;
     [SerializeField]
     Texture2D levelLayout;
     [SerializeField]
@@ -37,6 +38,9 @@ public class LevelBuilder : MonoBehaviour
     // Set up references
     private void Awake()
     {
+        // Find Game Manager
+        gameManager = GameObject.FindGameObjectWithTag("GM").GetComponent<GameManager>();
+
         // Load resources
         if (levelLayout == null)    //loads the Test levels if no one is selected!
         {
@@ -56,6 +60,9 @@ public class LevelBuilder : MonoBehaviour
         {
             Debug.Log("Level layout: " + levelLayout + " (" + levelLayout.width + "x" + levelLayout.height + " px)");
         }
+
+        // Set new World Size
+        gameManager.SetWorldSize(levelLayout.width, levelLayout.height);
 
         // Check values
         if (thickBorders && !forceBorders)

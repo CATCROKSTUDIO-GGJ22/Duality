@@ -65,6 +65,9 @@ public class EnemyController : MonoBehaviour
                 this.transform.Translate(this.transform.right * horizontalDirection * horizontalSpeed * Time.deltaTime);
             }
         }
+
+        // Enemies will always turn back when reaching a World limit! (WIP)
+        //TurnBack();
     }
 
     // LateUpdate is called right before the render engine
@@ -96,7 +99,7 @@ public class EnemyController : MonoBehaviour
             TurnBack();
         }
 
-        //borders have been suppressed, check for level limits! (WIP)
+        // (level borders have been deprecated - use new World Size @ Game Manager to calculate level limits!)
     }
 
     // Helper function for turning back ater a hit
