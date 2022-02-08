@@ -243,12 +243,12 @@ public class PlayerStats : MonoBehaviour
                         }
                         break;
                 }
-
-                // Trigger invincibility time
-                ActivateHitboxes(false);
-                invTimer = 0f;
-                Debug.Log("Starting invincibility time!");
             }
+
+            // Trigger invincibility time
+            ActivateHitboxes(false);
+            invTimer = 0f;
+            Debug.Log("Starting invincibility time!");
         }
 
         // Push the Helioid, swap its rotation and start the control's locking time (if applicable)
