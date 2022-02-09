@@ -74,6 +74,7 @@ public class LevelBuilder : MonoBehaviour
         // Build the level
         if (levelLayout != null)
         {
+            // Create the grid
             BuildLevel();
             
             // Determine wall tiles
@@ -112,10 +113,11 @@ public class LevelBuilder : MonoBehaviour
                         Debug.Log(borderObj.name + " has been instanciated @(" + i + "," + j + ")");
                     }
 
-                    else
+                    else if (wallObj != null)
                     {
-                        Instantiate(wallObj, new Vector2(i, j), Quaternion.identity);
-                        Debug.Log(wallObj.name + " has been instanciated @(" + i + "," + j + ")");
+                        GameObject ob = Instantiate(wallObj, new Vector2(i, j), Quaternion.identity);
+                        grid.Add(ob);
+                        Debug.Log(ob.name + " has been instanciated @(" + i + "," + j + ")");
                     }
                 }
 
@@ -129,10 +131,9 @@ public class LevelBuilder : MonoBehaviour
                         // Wall object
                         if (pixelC.Equals(wallPx) && wallObj != null)
                         {
-                            //GameObject ob = Instantiate(wallObj, new Vector2(i, j), Quaternion.identity);
-                            grid.Add(Instantiate(wallObj, new Vector2(i, j), Quaternion.identity));
-                            Debug.Log(wallObj.name + " has been instanciated @(" + i + "," + j + ")");
-                            grid.Add(Instantiate(wallObj, new Vector2(i, j), Quaternion.identity));
+                            GameObject ob = Instantiate(wallObj, new Vector2(i, j), Quaternion.identity);
+                            grid.Add(ob);
+                            Debug.Log(ob.name + " has been instanciated @(" + i + "," + j + ")");
                         }
 
                         // Enemy object

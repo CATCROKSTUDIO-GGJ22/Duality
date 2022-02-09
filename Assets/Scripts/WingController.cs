@@ -46,7 +46,7 @@ public class WingController : MonoBehaviour
         }
 
         // Potions
-        else if (col.gameObject.tag == "Potion")                        //the potion heals the Wing that hits them and then the potion itself is destroyed
+        if (col.gameObject.tag == "Potion") //the potion heals the Wing that hits them and then the potion itself is destroyed
         {
             playerStats.Heal(wingID);
             Destroy(col.gameObject);

@@ -374,6 +374,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LevelManager
       objectReference: {fileID: 0}
+    - target: {fileID: 4852695807398616799, guid: 07c720cc26bc4ae44818b5e94b13eb3a, type: 3}
+      propertyPath: thickBorders
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 07c720cc26bc4ae44818b5e94b13eb3a, type: 3}
 --- !u!1001 &6377049248131684954
