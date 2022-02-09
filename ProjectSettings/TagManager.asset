@@ -8,6 +8,7 @@ TagManager:
   - Potion
   - Goal
   - GM
+  - Enemy
   layers:
   - Default
   - TransparentFX

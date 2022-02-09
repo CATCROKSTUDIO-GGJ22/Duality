@@ -5,21 +5,26 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     [SerializeField]
-    private float verticalSpeed;    //vertical speed
+    private int baseDamage;             //damage applied to the player if they're hit
+    [SerializeField]
+    private float verticalSpeed;        //vertical speed
     private int verticalDirection;
     [SerializeField]
-    private float horizontalSpeed;  //horizontal speed
+    private float horizontalSpeed;      //horizontal speed
     private int horizontalDirection;
     [SerializeField]
-    private bool sinusoidal;        //if the movement is sinusoidal
+    private bool sinusoidal;            //if the movement is sinusoidal
     [SerializeField]
-    private bool turnsBackOnWalls;  //if turns back when colliding with a Wall or other Enemies
+    private bool turnsBackOnWalls;      //if turns back when colliding with a Wall or other Enemies
     [SerializeField]
-    private bool turnsBackOnPlayer; //if turns back when colliding with the Player
+    private bool turnsBackOnPlayer;     //if turns back when colliding with the Player
     [SerializeField]
-    private bool destroyedOnHit;    //if it's destroyed after hitting the player
+    private bool killSelfOnHitWalls;    //if it's destroyed after hitting a Wall (or reaching the level limits)
+    [SerializeField]
+    private bool killSelfOnHitPlayer;   //if it's destroyed after hitting the player
     SpriteRenderer sprite;
-    private bool hit;   //makes sure it will only turn back once per frame (despite the number of colliders it enters)
+    private bool hit;                   //makes sure it will only turn back once per frame (despite the number of colliders it enters)
+    private bool playerHit;             //if has hit a player on previous frame
 
     // Set up references
     private void Awake()
@@ -31,20 +36,46 @@ public class EnemyController : MonoBehaviour
     private void Start()
     {
         // Check values
-        if (turnsBackOnPlayer && destroyedOnHit)
+        if (turnsBackOnPlayer && killSelfOnHitPlayer)
         {
             turnsBackOnPlayer = false;
-            Debug.Log("WARNING: TurnsBackOnPlayer and DestroyedOnHit are both checked! It won't be visible when turning back after hitting a Player so it has been deactivated");
+            Debug.Log("WARNING: TurnsBackOnPlayer and KillOnHitPlayer are both checked! It won't be visible when turning back after hitting a Player so it has been deactivated");
+        }
+        if (turnsBackOnWalls && killSelfOnHitWalls)
+        {
+            turnsBackOnWalls = false;
+            Debug.Log("WARNING: TurnsBackOnWalls and KillOnHitWalls are both checked! It won't be visible when turning back after hitting a Wall so it has been deactivated");
         }
 
         // Randomize initial directions
         verticalDirection = Random.Range(0, 2) * 2 - 1;
         horizontalDirection = Random.Range(0, 2) * 2 - 1;
+
+        // Initialize control values
+        hit = false;
+        playerHit = false;
     }
 
     // Update is called once per frame
     private void Update()
     {
+        if (playerHit)  //checks if has been hit by a Player on previous frame
+        {
+            if (killSelfOnHitPlayer)
+            {
+                Destroy(this.gameObject);
+            }
+            else
+            {
+                if (turnsBackOnPlayer)
+                {
+                    TurnBack();
+                }
+                //trigger any effect after hitting a Player -HERE- (WIP)
+            }
+            playerHit = false;
+        }
+
         hit = false;    //resets control boolean
 
         if (sinusoidal)
@@ -86,20 +117,20 @@ public class EnemyController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        // Player
-        if (turnsBackOnPlayer && col.gameObject.tag == "Player")    //UNREACHABLE because the player is pushed bach before (WIP)
+        // Walls
+        if (col.gameObject.tag == "Hazard")
         {
-            TurnBack();
-            //DESTROY?? (WIP)
+            if (killSelfOnHitWalls)
+            {
+                Destroy(this.gameObject);
+            }
+            else if (turnsBackOnWalls)
+            {
+                TurnBack();
+            }
         }
 
-        // Walls/Enemies
-        else if (turnsBackOnWalls && col.gameObject.tag == "Hazard")
-        {
-            TurnBack();
-        }
-
-        // (level borders have been deprecated - use new World Size @ Game Manager to calculate level limits!)
+        // (the level border objects have been deprecated - use new World Size @ Game Manager to calculate level limits!)
     }
 
     // Helper function for turning back ater a hit
@@ -119,5 +150,11 @@ public class EnemyController : MonoBehaviour
 
             hit = true;
         }
+    }
+
+    public int GetDamage()
+    {
+        playerHit = true;
+        return baseDamage;
     }
 }

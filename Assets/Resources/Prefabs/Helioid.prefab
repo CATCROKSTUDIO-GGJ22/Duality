@@ -401,7 +401,7 @@ MonoBehaviour:
   baseRightMana: 5
   currentRightMana: 0
   baseDamageTaken: 1
-  baseRecovery: 1
+  baseRecovery: 2
   continuousBouncing: 0
   invincibility: 3
   blinking: 0.02

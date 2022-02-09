@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7264022822516529550}
   m_Layer: 6
   m_Name: Enemy
-  m_TagString: Hazard
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -144,9 +144,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1e813b021bf5c248be68b4160671f11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseDamage: 0
   verticalSpeed: 1
   horizontalSpeed: 1
   sinusoidal: 0
   turnsBackOnWalls: 1
-  turnsBackOnPlayer: 1
+  turnsBackOnPlayer: 0
   destroyedOnHit: 0

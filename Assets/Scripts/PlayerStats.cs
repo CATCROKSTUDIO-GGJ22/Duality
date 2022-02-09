@@ -203,7 +203,8 @@ public class PlayerStats : MonoBehaviour
 
     // Updates the PlayerStats (hit) and sends the changes to the PlayerController
     // the id indicates the Wing being hit, which mana is being substracted
-    public void Hit(int id, Vector2 hittingPoint)
+    // if the damage is negative (-1) applies Base Damage Taken
+    public void Hit(int id, int damage, Vector2 hittingPoint)
     {
         if (invTimer >= invincibility)
         {
@@ -214,11 +215,23 @@ public class PlayerStats : MonoBehaviour
             }
             else
             {
-                // Substract damage
+                // Apply damage
                 switch (id)
                 {
+                    // Left Wing
                     case 0:
-                        currentLeftMana -= baseDamageTaken;
+
+                        // Substract damage
+                        if (damage < 0)
+                        {
+                            currentLeftMana -= baseDamageTaken;
+                        }
+                        else
+                        {
+                            currentLeftMana -= damage;
+                        }
+
+                        // Check Game Over condition
                         if (currentLeftMana <= 0)
                         {
                             GameOver();
@@ -228,10 +241,23 @@ public class PlayerStats : MonoBehaviour
                             ActivateShield(true);
                             Debug.Log("Bonus SHIELD is UP!");
                         }
+
                         break;
 
+                    // Right Wing
                     case 1:
-                        currentRightMana -= baseDamageTaken;
+
+                        // Substract damage
+                        if (damage < 0)
+                        {
+                            currentRightMana -= baseDamageTaken;
+                        }
+                        else
+                        {
+                            currentLeftMana -= damage;
+                        }
+
+                        // Check Game Over condition
                         if (currentRightMana <= 0)
                         {
                             GameOver();
@@ -241,6 +267,7 @@ public class PlayerStats : MonoBehaviour
                             ActivateShield(true);
                             Debug.Log("Bonus SHIELD is UP!");
                         }
+
                         break;
                 }
             }
